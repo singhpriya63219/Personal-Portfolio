@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priya Kumari - Portfolio</title>
+    <meta name="description" content="Priya Kumari — Front End Developer & Student. Portfolio showcasing projects, skills, and achievements.">
+    <script src="https://cdn.tailwindcss.com"></script>
+     <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out infinite 2s',
+                        'rotate-slow': 'rotate 20s linear infinite',
+                        'pulse-slow': 'pulse 4s ease-in-out infinite',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                        'slide-up-fast': 'slideUpFast 0.3s ease-out',
+                    },
+                        keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideUpFast: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(-20px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-20px) rotate(180deg)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Three.js for 3D background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ========== 3D CANVAS BACKGROUND ========== */
+        #three-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ========== AURORA / GRADIENT GLOW OVERLAYS ========== */
+        .aurora-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(59, 130, 246, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(147, 51, 234, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 50% at 50% 80%, rgba(236, 72, 153, 0.05) 0%, transparent 70%);
+            animation: aurora-shift 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes aurora-shift {
+            0% { opacity: 0.6; filter: hue-rotate(0deg); }
+            50% { opacity: 1; filter: hue-rotate(15deg); }
+            100% { opacity: 0.7; filter: hue-rotate(-10deg); }
+        }
+
+        /* ========== GLASSMORPHISM CARDS ========== */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow:
+                0 25px 60px -12px rgba(0, 0, 0, 0.5),
+                0 0 40px -10px rgba(99, 102, 241, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* ========== 3D TILT EFFECT ========== */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+        }
+
+        .tilt-card .tilt-inner {
+            transform: translateZ(30px);
+        }
+
+        .tilt-card .tilt-icon {
+            transform: translateZ(60px);
+        }
+
+        /* ========== GLOW EFFECTS ========== */
+        .glow-blue {
+            box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.3);
+        }
+
+        .glow-purple {
+            box-shadow: 0 0 30px -5px rgba(147, 51, 234, 0.3);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 40px rgba(59, 130, 246, 0.3), 0 0 80px rgba(147, 51, 234, 0.15);
+        }
+
+        /* ========== FLOATING 3D SHAPES ========== */
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+                        
+        .shape {
+            position: absolute;
+            opacity: 0.06;
+            filter: blur(1px);
+        }
+                        
+        .shape-1 {
+            top: 20%;
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            animation: float3d-1 10s ease-in-out infinite;
+        }
+                        
+        .shape-2 {
+            top: 60%;
+            right: 15%;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #10b981, #3b82f6);
+            transform: rotate(45deg);
+            animation: float3d-2 12s ease-in-out infinite 2s;
+        }
+                        
+        .shape-3 {
+            bottom: 30%;
+            left: 20%;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #8b5cf6, #ec4899);
+            border-radius: 30%;
+            animation: float3d-3 14s ease-in-out infinite 4s;
+        }
+                        
+        .shape-4 {
+            top: 40%;
+            right: 30%;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #f59e0b, #ef4444);
+            border-radius: 50%;
+            animation: float3d-4 8s ease-in-out infinite 1s;
+        }
+
+        @keyframes float3d-1 {
+            0%, 100% { transform: translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-25px) translateZ(20px) rotateX(15deg) rotateY(10deg); }
+            50% { transform: translateY(-15px) translateZ(40px) rotateX(0deg) rotateY(180deg); }
+            75% { transform: translateY(-30px) translateZ(10px) rotateX(-10deg) rotateY(270deg); }
+        }
+
+        @keyframes float3d-2 {
+            0%, 100% { transform: rotate(45deg) translateY(0px) scale(1); }
+            33% { transform: rotate(90deg) translateY(-20px) scale(1.1); }
+            66% { transform: rotate(180deg) translateY(-35px) scale(0.9); }
+        }
+
+        @keyframes float3d-3 {
+            0%, 100% { transform: translateY(0px) rotateZ(0deg) scale(1); }
+            50% { transform: translateY(-25px) rotateZ(180deg) scale(1.15); }
+        }
+
+        @keyframes float3d-4 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-15px) translateX(10px); }
+            50% { transform: translateY(-30px) translateX(-5px); }
+            75% { transform: translateY(-10px) translateX(15px); }
+        }
+
+        /* ========== ENHANCED SECTION SPACING ========== */
+        .section-spacing {
+            padding: 5rem 0;
+        }
+
+        /* ========== PROGRESS BAR ANIMATION ========== */
+        .progress-fill {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        /* ========== GLOWING BORDER ANIMATION ========== */
+        .glow-border {
+            position: relative;
+        }
+
+        .glow-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899, #8b5cf6, #3b82f6);
+            background-size: 300% 300%;
+            animation: glow-rotate 6s linear infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .glow-border:hover::before {
+            opacity: 1;
+        }
+
+        /* ========== HERO RING ANIMATION ========== */
+        .hero-ring {
+            position: relative;
+        }
+
+        .hero-ring::before,
+        .hero-ring::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid;
+            animation: ring-pulse 3s ease-in-out infinite;
+        }
+
+        .hero-ring::before {
+            inset: -15px;
+            border-color: rgba(59, 130, 246, 0.3);
+            animation-delay: 0s;
+        }
+
+        .hero-ring::after {
+            inset: -30px;
+            border-color: rgba(147, 51, 234, 0.2);
+            animation-delay: 1s;
+        }
+
+        @keyframes ring-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        @keyframes glow-rotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ========== MOBILE MENU STYLES ========== */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            opacity: 0;
+        }
+
+        .mobile-menu.active {
+            max-height: 400px;
+            opacity: 1;
+        }
+
+        .mobile-menu a {
+            transform: translateX(-20px);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .mobile-menu.active a {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .mobile-menu.active a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-menu.active a:nth-child(2) { transition-delay: 0.2s; }
+        .mobile-menu.active a:nth-child(3) { transition-delay: 0.3s; }
+        .mobile-menu.active a:nth-child(4) { transition-delay: 0.4s; }
+        .mobile-menu.active a:nth-child(5) { transition-delay: 0.5s; }
+        .mobile-menu.active a:nth-child(6) { transition-delay: 0.6s; }
+
+        /* Hamburger Animation */
+        .hamburger-icon {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .hamburger-icon.active {
+            transform: rotate(90deg);
+        }
+
+        /* Backdrop blur for mobile menu */
+        .mobile-menu-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            z-index: 40;
+        }
+
+        .mobile-menu-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ========== SCROLL-LINKED PARALLAX DEPTH ========== */
+        .parallax-section {
+            transform-style: preserve-3d;
+            perspective: 1200px;
+        }
+
+        /* ========== NAV GLASS ========== */
+        .nav-glass {
+            background: rgba(3, 7, 18, 0.7);
+            backdrop-filter: blur(24px) saturate(1.8);
+            -webkit-backdrop-filter: blur(24px) saturate(1.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* ========== SECTION DIVIDER GLOW ========== */
+        .section-glow-top {
+            position: relative;
+        }
+
+        .section-glow-top::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4), rgba(168, 85, 247, 0.4), transparent);
+        }
+
+        /* ========== CUSTOM SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            border-radius: 3px;
+        }
+
+        /* ========== MOUSE GLOW CURSOR ========== */
+        .cursor-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+        }
+
+        /* ========== SKILL TAG 3D ========== */
+        .skill-tag {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-3px) translateZ(10px) scale(1.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ========== HERO TYPEWRITER CURSOR ========== */
+        .type-cursor::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+            color: #818cf8;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ========== CONTACT ICON 3D HOVER ========== */
+        .contact-icon-3d {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .contact-icon-3d:hover {
+            transform: rotateY(15deg) rotateX(-10deg) scale(1.1);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 30px -5px rgba(99, 102, 241, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-950 min-h-screen text-white overflow-x-hidden">
+    <!-- 3D Three.js Background Canvas -->
+    <canvas id="three-bg"></canvas>
+
+    <!-- Aurora glow overlay -->
+    <div class="aurora-overlay"></div>
+
+    <!-- Mouse-following glow -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Mobile Menu Backdrop -->
+    <div class="mobile-menu-backdrop md:hidden" id="mobileBackdrop"></div>
+
+    <!-- Floating Background Shapes -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full nav-glass shadow-lg z-50 animate-fade-in">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">PK</h1>
+                                
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium">Home</a>
+                    <a href="#about" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium">About</a>
+                    <a href="#education" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium">Education</a>
+                    <a href="#awards" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium">Awards</a>
+                    <a href="#projects" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium">Projects</a>
+                    <a href="#contact" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium">Contact</a>
+                </div>
+                                
+                <!-- Hamburger Button (Mobile) -->
+                <button class="hamburger-menu md:hidden text-gray-300 hover:text-blue-400 transition-colors duration-300 p-2" id="hamburgerBtn">
+                    <i class="fas fa-bars text-xl hamburger-icon" id="hamburgerIcon"></i>
+                </button>
+            </div>
+                        
+            <!-- Mobile Nav Menu -->
+            <div class="md:hidden mobile-menu glass-card rounded-lg mt-4" id="mobileMenu">
+                <div class="flex flex-col space-y-1 p-4">
+                    <a href="#home" class="block text-gray-300 hover:text-blue-400 hover:bg-gray-700/50 transition-all duration-300 font-medium py-3 px-4 rounded-lg mobile-menu-link">
+                        <i class="fas fa-home mr-3 text-blue-400"></i>Home
+                    </a>
+                    <a href="#about" class="block text-gray-300 hover:text-blue-400 hover:bg-gray-700/50 transition-all duration-300 font-medium py-3 px-4 rounded-lg mobile-menu-link">
+                        <i class="fas fa-user mr-3 text-purple-400"></i>About
+                    </a>
+                    <a href="#education" class="block text-gray-300 hover:text-blue-400 hover:bg-gray-700/50 transition-all duration-300 font-medium py-3 px-4 rounded-lg mobile-menu-link">
+                        <i class="fas fa-graduation-cap mr-3 text-green-400"></i>Education
+                    </a>
+                    <a href="#awards" class="block text-gray-300 hover:text-blue-400 hover:bg-gray-700/50 transition-all duration-300 font-medium py-3 px-4 rounded-lg mobile-menu-link">
+                        <i class="fas fa-trophy mr-3 text-yellow-400"></i>Awards
+                    </a>
+                    <a href="#projects" class="block text-gray-300 hover:text-blue-400 hover:bg-gray-700/50 transition-all duration-300 font-medium py-3 px-4 rounded-lg mobile-menu-link">
+                        <i class="fas fa-code mr-3 text-pink-400"></i>Projects
+                    </a>
+                    <a href="#contact" class="block text-gray-300 hover:text-blue-400 hover:bg-gray-700/50 transition-all duration-300 font-medium py-3 px-4 rounded-lg mobile-menu-link">
+                        <i class="fas fa-envelope mr-3 text-cyan-400"></i>Contact
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="section-spacing pt-24 px-4 relative z-10 min-h-screen flex items-center">
+        <div class="max-w-6xl mx-auto w-full">
+            <div class="text-center animate-slide-up">
+                <!-- Enhanced Photo Section with 3D Ring -->
+                <div class="hero-ring w-56 h-56 mx-auto mb-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-500 relative glow-purple">
+                    
+                </div>
+                                                                
+                <h1 class="text-5xl md:text-7xl font-extrabold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-6 animate-fade-in text-glow">
+                    Priya Kumari
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 mb-8 animate-fade-in font-light type-cursor" style="animation-delay: 0.2s;">
+                    Front End Developer | Student
+                </p>
+                <div class="flex justify-center space-x-4 animate-fade-in" style="animation-delay: 0.4s;">
+                    <button onclick="document.getElementById('projects').scrollIntoView({behavior: 'smooth'})" class="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium glow-blue hover:shadow-blue-500/30">
+                        View My Work
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section id="about" class="section-spacing px-4 relative z-10 section-glow-top" style="background: rgba(17, 24, 39, 0.5);">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-16 animate-fade-in text-glow">
+                About Me
+            </h2>
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <!-- About Content -->
+                <div class="animate-slide-up space-y-6">
+                    <p class="text-lg text-gray-300 leading-relaxed">
+                        Hello! I'm Priya, a passionate front-end developer with a strong interest in designing and building engaging, user-friendly websites. My journey in tech began with curiosity — exploring how websites work behind the scenes — and gradually turned into a deep enthusiasm for crafting responsive, interactive, and visually appealing user experiences.Alongside front-end development, I actively practice problem-solving on LeetCode, where I explore data structures and algorithms to build a strong foundation in computational thinking. This regular engagement helps me write more efficient and reliable code — whether it's for personal projects or real-world use cases.Lately, I've been exploring Artificial Intelligence and Machine Learning, fascinated by how intelligent systems can enhance web applications and solve real-world problems. I'm excited to keep learning, building, and contributing to meaningful projects that combine creativity with technology.
+                    </p>                                    
+                    <!-- Skills -->
+                    <div class="mt-8">
+                        <h3 class="text-2xl font-bold text-white mb-6">Skills & Technologies</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="skill-tag bg-blue-600/20 text-blue-400 px-4 py-2 rounded-full text-sm border border-blue-500/30 hover:bg-blue-600/30 cursor-default">JavaScript</span>
+                            <span class="skill-tag bg-green-600/20 text-green-400 px-4 py-2 rounded-full text-sm border border-green-500/30 hover:bg-green-600/30 cursor-default">Node.js</span>
+                            <span class="skill-tag bg-purple-600/20 text-purple-400 px-4 py-2 rounded-full text-sm border border-purple-500/30 hover:bg-purple-600/30 cursor-default">React</span>
+                            <span class="skill-tag bg-yellow-600/20 text-yellow-400 px-4 py-2 rounded-full text-sm border border-yellow-500/30 hover:bg-yellow-600/30 cursor-default">Python</span>
+                            <span class="skill-tag bg-red-600/20 text-red-400 px-4 py-2 rounded-full text-sm border border-red-500/30 hover:bg-red-600/30 cursor-default">MongoDB</span>
+                            <span class="skill-tag bg-indigo-600/20 text-indigo-400 px-4 py-2 rounded-full text-sm border border-indigo-500/30 hover:bg-indigo-600/30 cursor-default">CSS</span>
+                            <span class="skill-tag bg-pink-600/20 text-pink-400 px-4 py-2 rounded-full text-sm border border-pink-500/30 hover:bg-pink-600/30 cursor-default">HTML5</span>
+                            <span class="skill-tag bg-cyan-600/20 text-cyan-400 px-4 py-2 rounded-full text-sm border border-cyan-500/30 hover:bg-cyan-600/30 cursor-default">C++</span>
+                            <span class="skill-tag bg-purple-600/20 text-purple-400 px-4 py-2 rounded-full text-sm border border-purple-500/30 hover:bg-purple-600/30 cursor-default">Machine Learning</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats/Achievements -->
+                <div class="animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="glass-card tilt-card p-8 rounded-2xl shadow-2xl" data-tilt>
+                        <h3 class="text-2xl font-bold text-white mb-8 text-center tilt-inner">Quick Stats</h3>
+                        <div class="grid grid-cols-2 gap-8 mb-8 tilt-inner">
+                            <div class="text-center">
+                                <div class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">2</div>
+                                <div class="text-gray-400 text-sm font-medium">Projects Completed</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2">50+</div>
+                                <div class="text-gray-400 text-sm font-medium">Leetcode Solved</div>
+                            </div>
+                        </div>
+                                                                        
+                        <!-- Progress Bars -->
+                        <div class="space-y-6 tilt-inner">
+                            <div>
+                                <div class="flex justify-between text-sm text-gray-400 mb-2 font-medium">
+                                    <span>Frontend Development</span>
+                                    <span>80%</span>
+                                </div>
+                                <div class="w-full bg-gray-700/50 rounded-full h-3 overflow-hidden">
+                                    <div class="progress-fill bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-1000" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm text-gray-400 mb-2 font-medium">
+                                    <span>Python</span>
+                                    <span>70%</span>
+                                </div>
+                                <div class="w-full bg-gray-700/50 rounded-full h-3 overflow-hidden">
+                                    <div class="progress-fill bg-gradient-to-r from-green-500 to-blue-600 h-3 rounded-full transition-all duration-1000" style="width: 70%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm text-gray-400 mb-2 font-medium">
+                                    <span>C++</span>
+                                    <span>40%</span>
+                                </div>
+                                <div class="w-full bg-gray-700/50 rounded-full h-3 overflow-hidden">
+                                    <div class="progress-fill bg-gradient-to-r from-purple-500 to-pink-600 h-3 rounded-full transition-all duration-1000" style="width: 40%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="section-spacing px-4 relative z-10 section-glow-top" style="background: rgba(3, 7, 18, 0.5);">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-16 animate-fade-in text-glow">
+                Education
+            </h2>
+            <div class="space-y-8">
+                <!-- Education Item 1 -->
+                <div class="glass-card tilt-card glow-border p-8 rounded-2xl shadow-2xl animate-slide-up" data-tilt>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between tilt-inner">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-white mb-2">B.Tech in Computer Science of Engineering</h3>
+                            <p class="text-lg text-blue-400 font-semibold mb-2">SRM Institute of Science and Technology, Ramapuram</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 text-right">
+                            <span class="bg-blue-600/20 text-blue-400 px-6 py-2 rounded-full text-sm font-semibold border border-blue-500/30">2023 - 2027</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Item 2 -->
+                <div class="glass-card tilt-card glow-border p-8 rounded-2xl shadow-2xl animate-slide-up" style="animation-delay: 0.2s;" data-tilt>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between tilt-inner">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-white mb-2">Higher Secondary / Intermediate</h3>
+                            <p class="text-lg text-green-400 font-semibold mb-2">Public School Darbhanga, Bihar</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 text-right">
+                            <span class="bg-green-600/20 text-green-400 px-6 py-2 rounded-full text-sm font-semibold border border-green-500/30">2021 - 2022</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Item 3 -->
+                <div class="glass-card tilt-card glow-border p-8 rounded-2xl shadow-2xl animate-slide-up" style="animation-delay: 0.4s;" data-tilt>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between tilt-inner">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-white mb-2">Matriculation</h3>
+                            <p class="text-lg text-purple-400 font-semibold mb-2">Public School Darbhanga, Bihar</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 text-right">
+                            <span class="bg-purple-600/20 text-purple-400 px-6 py-2 rounded-full text-sm font-semibold border border-purple-500/30">2019 - 2020</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section-spacing px-4 relative z-10 section-glow-top" style="background: rgba(3, 7, 18, 0.5);">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-16 animate-fade-in text-glow">
+                Projects
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Project 1 -->
+                <div class="glass-card tilt-card glow-border p-6 rounded-2xl shadow-2xl animate-slide-up group" data-tilt>
+                    <div class="h-48 bg-gradient-to-r from-blue-600 to-purple-700 rounded-xl mb-6 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg tilt-icon overflow-hidden relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-600/0 to-purple-700/0 group-hover:from-blue-600/20 group-hover:to-purple-700/20 transition-all duration-500"></div>
+                        <i class="fas fa-code text-4xl text-white relative z-10"></i>
+                    </div>
+                    <div class="tilt-inner">
+                        <h3 class="text-xl font-bold text-white mb-3">Hospital management system</h3>
+                        <p class="text-gray-400 mb-4 leading-relaxed">Developed a dynamic and responsive Hospital Management System website featuring patient registration, appointment scheduling, doctor management, and an intuitive user-friendly interface to streamline hospital operations and improve patient care.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="skill-tag bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-sm border border-blue-500/30">CSS</span>
+                            <span class="skill-tag bg-green-600/20 text-green-400 px-3 py-1 rounded-full text-sm border border-green-500/30">HTML5</span>
+                            <span class="skill-tag bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full text-sm border border-purple-500/30">JS</span>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/singhpriya63219/Hospital-Management-System" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors duration-300 transform hover:scale-110">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="glass-card tilt-card glow-border p-6 rounded-2xl shadow-2xl animate-slide-up group" style="animation-delay: 0.2s;" data-tilt>
+                    <div class="h-48 bg-gradient-to-r from-purple-600 to-pink-700 rounded-xl mb-6 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg tilt-icon overflow-hidden relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-600/0 to-pink-700/0 group-hover:from-purple-600/20 group-hover:to-pink-700/20 transition-all duration-500"></div>
+                        <i class="fas fa-chart-line text-4xl text-white relative z-10"></i>
+                    </div>
+                    <div class="tilt-inner">
+                        <h3 class="text-xl font-bold text-white mb-3">SUSHI</h3>
+                        <p class="text-gray-400 mb-4 leading-relaxed">Developed a Sushi Restaurant website with an interactive digital menu, intuitive navigation, and engaging UI to enhance customer experience.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="skill-tag bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full text-sm border border-purple-500/30">html</span>
+                            <span class="skill-tag bg-indigo-600/20 text-indigo-400 px-3 py-1 rounded-full text-sm border border-indigo-500/30">CSS</span>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/singhpriya63219/SUSHI/blob/main/index.html" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors duration-300 transform hover:scale-110">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-spacing px-4 relative z-10 section-glow-top" style="background: rgba(17, 24, 39, 0.5);">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-16 animate-fade-in text-glow">
+                Get In Touch
+            </h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12 animate-slide-up">
+                    <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                        I'm always open to discussing new opportunities and interesting projects.
+                    </p>
+                </div>
+                                                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                    <!-- Email -->
+                    <div class="text-center group animate-slide-up">
+                        <div class="contact-icon-3d w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-700 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg glow-blue">
+                            <i class="fas fa-envelope text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Email</h3>
+                        <a href="mailto:rituparnadbg17@gmail.com" class="text-blue-400 hover:text-blue-300 transition-colors duration-300 break-all">
+                            singhpriya63219@gmail.com
+                        </a>
+                    </div>
+
+                    <!-- LinkedIn -->
+                    <div class="text-center group animate-slide-up" style="animation-delay: 0.1s;">
+                        <div class="contact-icon-3d w-16 h-16 bg-gradient-to-r from-blue-700 to-blue-900 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i class="fab fa-linkedin text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">LinkedIn</h3>
+                        <a href="https://www.linkedin.com/in/priya-singh-836aa7299/" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors duration-300">
+                            /priya-singh-836aa7299
+                        </a>
+                    </div>
+
+                    <!-- GitHub -->
+                    <div class="text-center group animate-slide-up" style="animation-delay: 0.2s;">
+                        <div class="contact-icon-3d w-16 h-16 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i class="fab fa-github text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">GitHub</h3>
+                        <a href="https://github.com/singhpriya63219/add" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors duration-300">
+                            /singhpriya63219
+                        </a>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="text-center group animate-slide-up" style="animation-delay: 0.3s;">
+                        <div class="contact-icon-3d w-16 h-16 bg-gradient-to-r from-green-600 to-green-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i class="fas fa-phone text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Phone</h3>
+                        <a href="tel:+919508871933" class="text-blue-400 hover:text-blue-300 transition-colors duration-300">
+                            +91 9801458602
+                        </a>
+                    </div>
+                </div>
+                                
+                <!-- Contact Form -->
+                <div class="glass-card tilt-card p-8 rounded-2xl shadow-2xl animate-slide-up" style="animation-delay: 0.4s;" data-tilt>
+                    <h3 class="text-2xl font-bold text-white mb-8 text-center tilt-inner">Send a Message</h3>
+                    <form
+                         class="space-y-6 tilt-inner"
+                        method="POST"
+                        action="https://script.google.com/macros/s/AKfycbyhAAFK67QoDvOxSkaMOof7ICOIhW7HROSZTAvaFciofDI2NrEdF538necDE1Tzqaq9jg/exec"
+                        onsubmit="submitForm(event)"
+                    >
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <input name="name" type="text" placeholder="Your Name" required
+                                class="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm" />
+                                                        
+                            <input name="email" type="email" placeholder="Your Email" required
+                                class="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm" />
+                        </div>
+                        <input name="subject" type="text" placeholder="Subject"
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm" />
+                        <textarea name="message" placeholder="Your Message" rows="5" required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 resize-none backdrop-blur-sm"></textarea>
+                        <div class="text-center">
+                            <button type="submit"
+                                class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium glow-blue hover:shadow-blue-500/30">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950/80 text-white py-8 px-4 border-t border-gray-800/50 relative z-10 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-gray-400 mb-4">© 2025 Priya Kumari. All rights reserved.</p>
+            <div class="flex justify-center space-x-6">
+                <a href="https://www.linkedin.com/in/priya-singh-836aa7299/" target="_blank" class="text-gray-400 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110">
+                    <i class="fab fa-linkedin text-2xl"></i>
+                </a>
+                <a href="https://github.com/singhpriya63219/add" target="_blank" class="text-gray-400 hover:text-blue-400 transition-colors duration-300 transform hover:scale-110">
+                    <i class="fab fa-github text-2xl"></i>
+                </a>
+                <a href="https://www.instagram.com/" target="_blank" class="text-gray-400 hover:text-pink-500 transition-colors duration-300 transform hover:scale-110">
+                    <i class="fab fa-instagram text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
