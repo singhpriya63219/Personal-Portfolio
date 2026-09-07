@@ -352,34 +352,81 @@ window.addEventListener("resize", () => {
 
 
 // ============================================================
-// 5. CONTACT FORM (preserved)
+// 5. CONTACT FORM — Web3Forms Integration
 // ============================================================
+function showToast(message, isSuccess) {
+  const toast = document.getElementById("toast");
+  const toastIcon = document.getElementById("toastIcon");
+  const toastMessage = document.getElementById("toastMessage");
+  if (!toast) return;
+
+  toastMessage.textContent = message;
+
+  if (isSuccess) {
+    toastIcon.innerHTML = '<i class="fas fa-check text-green-400"></i>';
+    toastIcon.className = "w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center";
+    toast.querySelector(".glass-card").classList.remove("border-red-500/30");
+    toast.querySelector(".glass-card").classList.add("border-green-500/30");
+  } else {
+    toastIcon.innerHTML = '<i class="fas fa-times text-red-400"></i>';
+    toastIcon.className = "w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center";
+    toast.querySelector(".glass-card").classList.remove("border-green-500/30");
+    toast.querySelector(".glass-card").classList.add("border-red-500/30");
+  }
+
+  // Show toast
+  toast.style.transform = "translateY(0)";
+  toast.style.opacity = "1";
+
+  // Auto-hide after 4 seconds
+  setTimeout(() => {
+    toast.style.transform = "translateY(20px)";
+    toast.style.opacity = "0";
+  }, 4000);
+}
+
 function submitForm(event) {
   event.preventDefault();
   const form = event.target;
   const formData = new FormData(form);
 
-  const submitBtn = form.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
-  submitBtn.textContent = "Sending...";
-  submitBtn.disabled = true;
+  // Convert to JSON for Web3Forms
+  const data = {};
+  formData.forEach((value, key) => {
+    data[key] = value;
+  });
 
-  fetch(form.action, {
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalHTML = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+  submitBtn.disabled = true;
+  submitBtn.style.opacity = "0.7";
+
+  fetch("https://api.web3forms.com/submit", {
     method: "POST",
-    body: formData,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+    body: JSON.stringify(data),
   })
-    .then((response) => response.text())
-    .then((data) => {
-      alert("Message sent successfully!");
-      form.reset();
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.success) {
+        showToast("Message sent successfully! I'll get back to you soon. ✨", true);
+        form.reset();
+      } else {
+        showToast("Failed to send message. Please try again.", false);
+      }
     })
     .catch((error) => {
-      console.error("Error!", error.message);
-      alert("There was an error. Please try again later.");
+      console.error("Error!", error);
+      showToast("Network error. Please check your connection.", false);
     })
     .finally(() => {
-      submitBtn.textContent = originalText;
+      submitBtn.innerHTML = originalHTML;
       submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
     });
 }
 
